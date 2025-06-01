@@ -3,7 +3,11 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 def load_dataset(path):
-    df = pd.read_csv(path)
+    try:
+        df = pd.read_csv(path, encoding="utf-8")
+    except UnicodeDecodeError:
+        # Fallback for Windows encoding
+        df = pd.read_csv(path, encoding="latin1")
     return df
 
 def drop_duplicates(df, subset_col="track_id"):
