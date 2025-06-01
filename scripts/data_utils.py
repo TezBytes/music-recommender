@@ -1,13 +1,19 @@
 
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+import chardet
 
 def load_dataset(path):
+    with open(path, 'rb') as f:
+        raw_data = f.read()
+        detected = chardet.detect(raw_data)
+        encoding = detected['encoding'] or 'utf-8'  # fallback to utf-8 if None
+        
     try:
-        df = pd.read_csv(path, encoding="utf-8")
+        df = pd.read_csv(path, encoding=encoding)
     except UnicodeDecodeError:
-        # Fallback for Windows encoding
-        df = pd.read_csv(path, encoding="latin1")
+        df = pd.read_csv(path, encoding='latin1')  # Last-resort fallback
+
     return df
 
 def drop_duplicates(df, subset_col="track_id"):
